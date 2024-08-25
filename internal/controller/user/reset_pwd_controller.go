@@ -16,10 +16,28 @@ type ResetPwdController struct {
 	UserService     *userservice.UserService
 }
 
+// NewResetPwdController returns a new instance of ResetPwdController.
+//
+// It takes two parameters: resetPwdService and userService, both pointers to services used for password reset and user management respectively.
+// Returns a pointer to a ResetPwdController.
 func NewResetPwdController(resetPwdService *userservice.ResetPwdService, userService *userservice.UserService) *ResetPwdController {
 	return &ResetPwdController{ResetPwdService: resetPwdService, UserService: userService}
 }
 
+// VerifyAndResetPassword godoc
+// @Summary Verify OTP and Reset Password
+// @Description Verifies the provided OTP and, if valid, allows the user to reset their password.
+// @Tags Password Reset
+// @Accept  json
+// @Produce  json
+// @Param id path string true "User ID"
+// @Param ResetPassword body userDTO.ResetPassword true "Password reset request body"
+// @Success 200 {object} userDTO.GenericResponse "Password reset successfully"
+// @Failure 400 {object} commonerrors.ErrorMap "Bad Request"
+// @Failure 401 {object} commonerrors.ErrorMap "Unauthorized"
+// @Failure 406 {object} commonerrors.ErrorMap "Not Acceptable"
+// @Failure 500 {object} commonerrors.ErrorMap "Internal Server Error"
+// @Router /users/reset-password/{id}/verify [post]
 func (c *ResetPwdController) VerifyAndResetPassword(ctx *gin.Context) {
 	var ResetPassword userDTO.ResetPassword
 	if err := ctx.ShouldBindJSON(&ResetPassword); err != nil {
@@ -63,6 +81,17 @@ func (c *ResetPwdController) VerifyAndResetPassword(ctx *gin.Context) {
 	})
 }
 
+// Send godoc
+// @Summary Send Password Reset Code
+// @Description Generates a password reset code and sends it to the user's email.
+// @Tags Password Reset
+// @Accept  json
+// @Produce  json
+// @Param email body map[string]string true "User email"
+// @Success 200 {object} userDTO.GenericResponse "Password reset code sent successfully"
+// @Failure 400 {object} commonerrors.ErrorMap "Bad Request"
+// @Failure 500 {object} commonerrors.ErrorMap "Internal Server Error"
+// @Router /users/reset-password [get]
 func (c *ResetPwdController) Send(ctx *gin.Context) {
 	var reqBody map[string]string
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {

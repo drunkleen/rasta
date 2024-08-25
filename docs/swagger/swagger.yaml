@@ -1,8 +1,882 @@
 basePath: /api/v1
+definitions:
+  commonerrors.ErrorMap:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  commonerrors.GenericResponseError:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  newsletterDTO.CreateNewsletterRequest:
+    properties:
+      email_text:
+        type: string
+      limit:
+        type: integer
+    required:
+    - email_text
+    type: object
+  newsletterDTO.GenericResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  oauthDTO.Response:
+    properties:
+      is_active:
+        type: boolean
+      message:
+        type: string
+      oauth_token:
+        type: string
+      oauth_url:
+        type: string
+      status:
+        type: string
+    type: object
+  userDTO.GenericResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+  userDTO.LoginResponse:
+    properties:
+      status:
+        type: string
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/userDTO.User'
+    type: object
+  userDTO.ResetPassword:
+    properties:
+      new_password1:
+        type: string
+      new_password2:
+        type: string
+      otp:
+        type: string
+    required:
+    - new_password1
+    - new_password2
+    - otp
+    type: object
+  userDTO.UpdatePassword:
+    properties:
+      new_password1:
+        type: string
+      new_password2:
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password1
+    - new_password2
+    - old_password
+    type: object
+  userDTO.User:
+    properties:
+      account:
+        $ref: '#/definitions/usermodel.AccountType'
+      country:
+        $ref: '#/definitions/usermodel.RegionType'
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_disabled:
+        type: boolean
+      is_verified:
+        type: boolean
+      last_name:
+        type: string
+      oauth:
+        $ref: '#/definitions/oauthDTO.Response'
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  userDTO.UserCreate:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      region:
+        $ref: '#/definitions/usermodel.RegionType'
+      username:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - region
+    - username
+    type: object
+  userDTO.UserLogin:
+    properties:
+      otp:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  usermodel.AccountType:
+    enum:
+    - User
+    - Seller
+    - Admin
+    type: string
+    x-enum-varnames:
+    - AccountTypeNormal
+    - AccountTypeSeller
+    - AccountTypeAdmin
+  usermodel.RegionType:
+    enum:
+    - Northern America
+    - Central America
+    - Caribbean
+    - Northern South America
+    - Southern South America
+    - Western South America
+    - Eastern South America
+    - Scandinavia
+    - Southern Europe
+    - Western Europe
+    - Eastern Europe
+    - Central Europe
+    - Middle East
+    - Central Asia
+    - Eastern Asia
+    - Southern Asia
+    - Southeastern Asia
+    - Siberia
+    - Northern Africa
+    - Western Africa
+    - Central Africa
+    - Horn of Africa
+    - Southern Africa
+    - Australia and New Zealand
+    - Melanesia
+    - Micronesia
+    - Polynesia
+    type: string
+    x-enum-varnames:
+    - RegionTypeNorthernAmerica
+    - RegionTypeCentralAmerica
+    - RegionTypeCaribbean
+    - NorthernSouthAmerica
+    - SouthernSouthAmerica
+    - WesternSouthAmerica
+    - EasternSouthAmerica
+    - RegionTypeScandinavia
+    - RegionTypeSouthernEurope
+    - RegionTypeWesternEurope
+    - RegionTypeEasternEurope
+    - RegionTypeCentralEurope
+    - RegionTypeMiddleEast
+    - RegionTypeCentralAsia
+    - RegionTypeEasternAsia
+    - RegionTypeSouthernAsia
+    - RegionTypeSoutheasternAsia
+    - RegionTypeSiberia
+    - RegionTypeNorthernAfrica
+    - RegionTypeWesternAfrica
+    - RegionTypeCentralAfrica
+    - RegionTypeHornOfAfrica
+    - RegionTypeSouthernAfrica
+    - AustraliaAndNewZealand
+    - Melanesia
+    - Micronesia
+    - Polynesia
 info:
   contact: {}
   description: API for Rasta
   title: Rasta API
   version: "1.0"
-paths: {}
+paths:
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of users with pagination support
+      parameters:
+      - default: 10
+        description: Number of users per page
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: Get users with pagination
+      tags:
+      - Users
+  /admin/users/count:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the total count of users in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: Get the total number of users
+      tags:
+      - Users
+  /admin/users/id/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: Delete a user
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user details by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: Get user by ID
+      tags:
+      - Users
+  /newsletter/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a subscriber from the newsletter system using the provided
+        email address.
+      parameters:
+      - description: User email
+        in: body
+        name: email
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted subscriber
+          schema:
+            $ref: '#/definitions/newsletterDTO.GenericResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.GenericResponseError'
+      summary: Delete Subscriber
+      tags:
+      - Newsletter
+  /newsletter/send:
+    post:
+      consumes:
+      - application/json
+      description: Sends the newsletter email to all active subscribers.
+      parameters:
+      - description: Newsletter content and limit
+        in: body
+        name: newsletter
+        required: true
+        schema:
+          $ref: '#/definitions/newsletterDTO.CreateNewsletterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully sent newsletter to all active participants
+          schema:
+            $ref: '#/definitions/newsletterDTO.GenericResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.GenericResponseError'
+      summary: Send Newsletter to Active Subscribers
+      tags:
+      - Newsletter
+  /newsletter/subscribe:
+    post:
+      consumes:
+      - application/json
+      description: Subscribes the user to the newsletter with the provided email address.
+      parameters:
+      - description: User email
+        in: body
+        name: email
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully subscribed to newsletter
+          schema:
+            $ref: '#/definitions/newsletterDTO.GenericResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "406":
+          description: Email already subscribed
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Subscribe to Newsletter
+      tags:
+      - Newsletter
+  /newsletter/subscribers:
+    get:
+      description: Retrieves a list of all active newsletter subscribers.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully fetched subscribers
+          schema:
+            $ref: '#/definitions/newsletterDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Get Active Subscribers
+      tags:
+      - Newsletter
+  /newsletter/subscribers/count:
+    get:
+      description: Retrieves the count of active newsletter subscribers.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully fetched subscribers count
+          schema:
+            $ref: '#/definitions/newsletterDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Get Active Subscribers Count
+      tags:
+      - Newsletter
+  /newsletter/unsubscribe:
+    post:
+      consumes:
+      - application/json
+      description: Unsubscribes the user from the newsletter using the provided email
+        address.
+      parameters:
+      - description: User email
+        in: body
+        name: email
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully unsubscribed from newsletter
+          schema:
+            $ref: '#/definitions/newsletterDTO.GenericResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "406":
+          description: Email not subscribed
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Unsubscribe from Newsletter
+      tags:
+      - Newsletter
+  /newsletter/unsubscribed/count:
+    get:
+      description: Retrieves the count of unsubscribed users from the newsletter.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully fetched unsubscribed count
+          schema:
+            $ref: '#/definitions/newsletterDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Get Unsubscribed Count
+      tags:
+      - Newsletter
+  /users/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user details by their username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: Get user by username
+      tags:
+      - Users
+  /users/{username}/update-password:
+    put:
+      consumes:
+      - application/json
+      description: Updates the password for the currently authenticated user
+      parameters:
+      - description: Password update payload
+        in: body
+        name: updatePassword
+        required: true
+        schema:
+          $ref: '#/definitions/userDTO.UpdatePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: Update user password
+      tags:
+      - Users
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns a JWT token
+      parameters:
+      - description: User login payload
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userDTO.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/userDTO.LoginResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: User login
+      tags:
+      - Users
+  /users/oauth/disable:
+    delete:
+      consumes:
+      - application/json
+      description: Disables OAuth for the user's account by verifying the provided
+        OAuth code.
+      parameters:
+      - description: OAuth code
+        in: body
+        name: oauth
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OAuth disabled successfully
+          schema:
+            $ref: '#/definitions/oauthDTO.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      security:
+      - BearerAuth: []
+      summary: Disable OAuth
+      tags:
+      - OAuth
+  /users/oauth/enable:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the OAuth code provided by the user and enables OAuth
+        for the account.
+      parameters:
+      - description: OAuth code
+        in: body
+        name: oauth
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OAuth enabled successfully
+          schema:
+            $ref: '#/definitions/oauthDTO.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      security:
+      - BearerAuth: []
+      summary: Verify and Enable OAuth
+      tags:
+      - OAuth
+  /users/oauth/generate:
+    get:
+      description: Generates an OAuth secret and URL for the user to enable OAuth.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OAuth secret and URL
+          schema:
+            $ref: '#/definitions/oauthDTO.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      security:
+      - BearerAuth: []
+      summary: Generate OAuth Secret and URL
+      tags:
+      - OAuth
+  /users/otp/{id}/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the user's email using the provided OTP. If successful,
+        marks the email as verified and deletes the OTP.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: OTP code
+        in: body
+        name: otp
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Email verified successfully
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Verify Email with OTP
+      tags:
+      - OTP
+  /users/otp/resend:
+    post:
+      consumes:
+      - application/json
+      description: Resends the OTP to the user's email for verification purposes.
+      parameters:
+      - description: User email
+        in: body
+        name: email
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP sent successfully
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Resend OTP to Email
+      tags:
+      - OTP
+  /users/reset-password:
+    get:
+      consumes:
+      - application/json
+      description: Generates a password reset code and sends it to the user's email.
+      parameters:
+      - description: User email
+        in: body
+        name: email
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset code sent successfully
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Send Password Reset Code
+      tags:
+      - Password Reset
+  /users/reset-password/{id}/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the provided OTP and, if valid, allows the user to reset
+        their password.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Password reset request body
+        in: body
+        name: ResetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/userDTO.ResetPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset successfully
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/commonerrors.ErrorMap'
+      summary: Verify OTP and Reset Password
+      tags:
+      - Password Reset
+  /users/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account and send a verification OTP email
+      parameters:
+      - description: User creation payload
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userDTO.UserCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/userDTO.GenericResponse'
+      summary: Create a new user
+      tags:
+      - Users
 swagger: "2.0"

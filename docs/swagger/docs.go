@@ -14,7 +14,1303 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/admin/users": {
+            "get": {
+                "description": "Get a list of users with pagination support",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get users with pagination",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Number of users per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/count": {
+            "get": {
+                "description": "Retrieve the total count of users in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get the total number of users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/id/{id}": {
+            "get": {
+                "description": "Retrieve user details by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/newsletter/delete": {
+            "delete": {
+                "description": "Deletes a subscriber from the newsletter system using the provided email address.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Newsletter"
+                ],
+                "summary": "Delete Subscriber",
+                "parameters": [
+                    {
+                        "description": "User email",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted subscriber",
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.GenericResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/newsletter/send": {
+            "post": {
+                "description": "Sends the newsletter email to all active subscribers.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Newsletter"
+                ],
+                "summary": "Send Newsletter to Active Subscribers",
+                "parameters": [
+                    {
+                        "description": "Newsletter content and limit",
+                        "name": "newsletter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.CreateNewsletterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully sent newsletter to all active participants",
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.GenericResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/newsletter/subscribe": {
+            "post": {
+                "description": "Subscribes the user to the newsletter with the provided email address.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Newsletter"
+                ],
+                "summary": "Subscribe to Newsletter",
+                "parameters": [
+                    {
+                        "description": "User email",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully subscribed to newsletter",
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "406": {
+                        "description": "Email already subscribed",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/newsletter/subscribers": {
+            "get": {
+                "description": "Retrieves a list of all active newsletter subscribers.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Newsletter"
+                ],
+                "summary": "Get Active Subscribers",
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched subscribers",
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/newsletter/subscribers/count": {
+            "get": {
+                "description": "Retrieves the count of active newsletter subscribers.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Newsletter"
+                ],
+                "summary": "Get Active Subscribers Count",
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched subscribers count",
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/newsletter/unsubscribe": {
+            "post": {
+                "description": "Unsubscribes the user from the newsletter using the provided email address.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Newsletter"
+                ],
+                "summary": "Unsubscribe from Newsletter",
+                "parameters": [
+                    {
+                        "description": "User email",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully unsubscribed from newsletter",
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "406": {
+                        "description": "Email not subscribed",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/newsletter/unsubscribed/count": {
+            "get": {
+                "description": "Retrieves the count of unsubscribed users from the newsletter.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Newsletter"
+                ],
+                "summary": "Get Unsubscribed Count",
+                "responses": {
+                    "200": {
+                        "description": "Successfully fetched unsubscribed count",
+                        "schema": {
+                            "$ref": "#/definitions/newsletterDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "description": "Authenticates a user and returns a JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "User login payload",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.UserLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.LoginResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/oauth/disable": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Disables OAuth for the user's account by verifying the provided OAuth code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OAuth"
+                ],
+                "summary": "Disable OAuth",
+                "parameters": [
+                    {
+                        "description": "OAuth code",
+                        "name": "oauth",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OAuth disabled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/oauthDTO.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/oauth/enable": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Verifies the OAuth code provided by the user and enables OAuth for the account.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OAuth"
+                ],
+                "summary": "Verify and Enable OAuth",
+                "parameters": [
+                    {
+                        "description": "OAuth code",
+                        "name": "oauth",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OAuth enabled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/oauthDTO.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/oauth/generate": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Generates an OAuth secret and URL for the user to enable OAuth.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OAuth"
+                ],
+                "summary": "Generate OAuth Secret and URL",
+                "responses": {
+                    "200": {
+                        "description": "OAuth secret and URL",
+                        "schema": {
+                            "$ref": "#/definitions/oauthDTO.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/otp/resend": {
+            "post": {
+                "description": "Resends the OTP to the user's email for verification purposes.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OTP"
+                ],
+                "summary": "Resend OTP to Email",
+                "parameters": [
+                    {
+                        "description": "User email",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP sent successfully",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/otp/{id}/verify": {
+            "post": {
+                "description": "Verifies the user's email using the provided OTP. If successful, marks the email as verified and deletes the OTP.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OTP"
+                ],
+                "summary": "Verify Email with OTP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "OTP code",
+                        "name": "otp",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email verified successfully",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/reset-password": {
+            "get": {
+                "description": "Generates a password reset code and sends it to the user's email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Password Reset"
+                ],
+                "summary": "Send Password Reset Code",
+                "parameters": [
+                    {
+                        "description": "User email",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset code sent successfully",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/reset-password/{id}/verify": {
+            "post": {
+                "description": "Verifies the provided OTP and, if valid, allows the user to reset their password.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Password Reset"
+                ],
+                "summary": "Verify OTP and Reset Password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Password reset request body",
+                        "name": "ResetPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.ResetPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/commonerrors.ErrorMap"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/signup": {
+            "post": {
+                "description": "Create a new user account and send a verification OTP email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User creation payload",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.UserCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{username}": {
+            "get": {
+                "description": "Retrieve user details by their username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by username",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{username}/update-password": {
+            "put": {
+                "description": "Updates the password for the currently authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user password",
+                "parameters": [
+                    {
+                        "description": "Password update payload",
+                        "name": "updatePassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.UpdatePassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/userDTO.GenericResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "commonerrors.ErrorMap": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "commonerrors.GenericResponseError": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "newsletterDTO.CreateNewsletterRequest": {
+            "type": "object",
+            "required": [
+                "email_text"
+            ],
+            "properties": {
+                "email_text": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                }
+            }
+        },
+        "newsletterDTO.GenericResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "oauthDTO.Response": {
+            "type": "object",
+            "properties": {
+                "is_active": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "oauth_token": {
+                    "type": "string"
+                },
+                "oauth_url": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "userDTO.GenericResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "userDTO.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/userDTO.User"
+                }
+            }
+        },
+        "userDTO.ResetPassword": {
+            "type": "object",
+            "required": [
+                "new_password1",
+                "new_password2",
+                "otp"
+            ],
+            "properties": {
+                "new_password1": {
+                    "type": "string"
+                },
+                "new_password2": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "string"
+                }
+            }
+        },
+        "userDTO.UpdatePassword": {
+            "type": "object",
+            "required": [
+                "new_password1",
+                "new_password2",
+                "old_password"
+            ],
+            "properties": {
+                "new_password1": {
+                    "type": "string"
+                },
+                "new_password2": {
+                    "type": "string"
+                },
+                "old_password": {
+                    "type": "string"
+                }
+            }
+        },
+        "userDTO.User": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/usermodel.AccountType"
+                },
+                "country": {
+                    "$ref": "#/definitions/usermodel.RegionType"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_disabled": {
+                    "type": "boolean"
+                },
+                "is_verified": {
+                    "type": "boolean"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "oauth": {
+                    "$ref": "#/definitions/oauthDTO.Response"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "userDTO.UserCreate": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password",
+                "region",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "region": {
+                    "$ref": "#/definitions/usermodel.RegionType"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "userDTO.UserLogin": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "otp": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "usermodel.AccountType": {
+            "type": "string",
+            "enum": [
+                "User",
+                "Seller",
+                "Admin"
+            ],
+            "x-enum-varnames": [
+                "AccountTypeNormal",
+                "AccountTypeSeller",
+                "AccountTypeAdmin"
+            ]
+        },
+        "usermodel.RegionType": {
+            "type": "string",
+            "enum": [
+                "Northern America",
+                "Central America",
+                "Caribbean",
+                "Northern South America",
+                "Southern South America",
+                "Western South America",
+                "Eastern South America",
+                "Scandinavia",
+                "Southern Europe",
+                "Western Europe",
+                "Eastern Europe",
+                "Central Europe",
+                "Middle East",
+                "Central Asia",
+                "Eastern Asia",
+                "Southern Asia",
+                "Southeastern Asia",
+                "Siberia",
+                "Northern Africa",
+                "Western Africa",
+                "Central Africa",
+                "Horn of Africa",
+                "Southern Africa",
+                "Australia and New Zealand",
+                "Melanesia",
+                "Micronesia",
+                "Polynesia"
+            ],
+            "x-enum-varnames": [
+                "RegionTypeNorthernAmerica",
+                "RegionTypeCentralAmerica",
+                "RegionTypeCaribbean",
+                "NorthernSouthAmerica",
+                "SouthernSouthAmerica",
+                "WesternSouthAmerica",
+                "EasternSouthAmerica",
+                "RegionTypeScandinavia",
+                "RegionTypeSouthernEurope",
+                "RegionTypeWesternEurope",
+                "RegionTypeEasternEurope",
+                "RegionTypeCentralEurope",
+                "RegionTypeMiddleEast",
+                "RegionTypeCentralAsia",
+                "RegionTypeEasternAsia",
+                "RegionTypeSouthernAsia",
+                "RegionTypeSoutheasternAsia",
+                "RegionTypeSiberia",
+                "RegionTypeNorthernAfrica",
+                "RegionTypeWesternAfrica",
+                "RegionTypeCentralAfrica",
+                "RegionTypeHornOfAfrica",
+                "RegionTypeSouthernAfrica",
+                "AustraliaAndNewZealand",
+                "Melanesia",
+                "Micronesia",
+                "Polynesia"
+            ]
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it

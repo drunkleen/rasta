@@ -16,10 +16,30 @@ type OtpController struct {
 	UserService *userservice.UserService
 }
 
+// NewOtpController returns a new instance of the OtpController struct.
+//
+// Parameters:
+// - otpService: a pointer to the userservice.OtpService object.
+// - userService: a pointer to the userservice.UserService object.
+//
+// Returns a pointer to the OtpController struct.
 func NewOtpController(otpService *userservice.OtpService, userService *userservice.UserService) *OtpController {
 	return &OtpController{OtpService: otpService, UserService: userService}
 }
 
+// VerifyEmail godoc
+// @Summary Verify Email with OTP
+// @Description Verifies the user's email using the provided OTP. If successful, marks the email as verified and deletes the OTP.
+// @Tags OTP
+// @Accept  json
+// @Produce  json
+// @Param id path string true "User ID"
+// @Param otp body map[string]string true "OTP code"
+// @Success 200 {object} userDTO.GenericResponse "Email verified successfully"
+// @Failure 400 {object} commonerrors.ErrorMap "Bad Request"
+// @Failure 401 {object} commonerrors.ErrorMap "Unauthorized"
+// @Failure 500 {object} commonerrors.ErrorMap "Internal Server Error"
+// @Router /users/otp/{id}/verify [post]
 func (c *OtpController) VerifyEmail(ctx *gin.Context) {
 	var reqBody map[string]string
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
@@ -62,6 +82,17 @@ func (c *OtpController) VerifyEmail(ctx *gin.Context) {
 
 }
 
+// ResendOtp godoc
+// @Summary Resend OTP to Email
+// @Description Resends the OTP to the user's email for verification purposes.
+// @Tags OTP
+// @Accept  json
+// @Produce  json
+// @Param email body map[string]string true "User email"
+// @Success 200 {object} userDTO.GenericResponse "OTP sent successfully"
+// @Failure 400 {object} commonerrors.ErrorMap "Bad Request"
+// @Failure 500 {object} commonerrors.ErrorMap "Internal Server Error"
+// @Router /users/otp/resend [post]
 func (c *OtpController) ResendOtp(ctx *gin.Context) {
 	var reqBody map[string]string
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {

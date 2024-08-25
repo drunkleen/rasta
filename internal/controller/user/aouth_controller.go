@@ -15,10 +15,24 @@ type OAuthController struct {
 	UserService  *userservice.UserService
 }
 
+// NewOAuthController creates a new instance of the OAuthController.
+//
+// It takes a pointer to the OAuthService and a pointer to the UserService as parameters to initialize the OAuthController.
+// It returns a pointer to the OAuthController.
 func NewOAuthController(oauthService *userservice.OAuthService, userService *userservice.UserService) *OAuthController {
 	return &OAuthController{OAuthService: oauthService, UserService: userService}
 }
 
+// GenerateOAuth godoc
+// @Summary Generate OAuth Secret and URL
+// @Description Generates an OAuth secret and URL for the user to enable OAuth.
+// @Tags OAuth
+// @Security BearerAuth
+// @Produce  json
+// @Success 200 {object} oauthDTO.Response "OAuth secret and URL"
+// @Failure 401 {object} commonerrors.ErrorMap "Unauthorized"
+// @Failure 500 {object} commonerrors.ErrorMap "Internal Server Error"
+// @Router /users/oauth/generate [get]
 func (c *OAuthController) GenerateOAuth(ctx *gin.Context) {
 	userId, exists := ctx.Get("userId")
 	if !exists {
@@ -53,6 +67,19 @@ func (c *OAuthController) GenerateOAuth(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, oauthDTO.ToOAuthResponse("", oauthSecret, oauthUrl, false))
 }
 
+// VerifyAndEnableOAuth godoc
+// @Summary Verify and Enable OAuth
+// @Description Verifies the OAuth code provided by the user and enables OAuth for the account.
+// @Tags OAuth
+// @Security BearerAuth
+// @Accept  json
+// @Produce  json
+// @Param oauth body map[string]string true "OAuth code"
+// @Success 200 {object} oauthDTO.Response "OAuth enabled successfully"
+// @Failure 400 {object} commonerrors.ErrorMap "Bad Request"
+// @Failure 401 {object} commonerrors.ErrorMap "Unauthorized"
+// @Failure 500 {object} commonerrors.ErrorMap "Internal Server Error"
+// @Router /users/oauth/enable [post]
 func (c *OAuthController) VerifyAndEnableOAuth(ctx *gin.Context) {
 	userId, exists := ctx.Get("userId")
 	if !exists {
@@ -99,6 +126,19 @@ func (c *OAuthController) VerifyAndEnableOAuth(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, oauthDTO.ToOAuthResponse("Otp enabled", "", "", true))
 }
 
+// DisableOAuth godoc
+// @Summary Disable OAuth
+// @Description Disables OAuth for the user's account by verifying the provided OAuth code.
+// @Tags OAuth
+// @Security BearerAuth
+// @Accept  json
+// @Produce  json
+// @Param oauth body map[string]string true "OAuth code"
+// @Success 200 {object} oauthDTO.Response "OAuth disabled successfully"
+// @Failure 400 {object} commonerrors.ErrorMap "Bad Request"
+// @Failure 401 {object} commonerrors.ErrorMap "Unauthorized"
+// @Failure 500 {object} commonerrors.ErrorMap "Internal Server Error"
+// @Router /users/oauth/disable [delete]
 func (c *OAuthController) DisableOAuth(ctx *gin.Context) {
 	userId, exists := ctx.Get("userId")
 	if !exists {
