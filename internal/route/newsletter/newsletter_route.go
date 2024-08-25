@@ -2,6 +2,7 @@ package newsletterroute
 
 import (
 	newslettercontroller "github.com/drunkleen/rasta/internal/controller/newsletter"
+	"github.com/drunkleen/rasta/internal/middlewares"
 	newsletterrepository "github.com/drunkleen/rasta/internal/repository/newsletter"
 	newsletterservice "github.com/drunkleen/rasta/internal/service/newsletter"
 	"github.com/drunkleen/rasta/pkg/database"
@@ -18,7 +19,7 @@ func RegisterUserRoutes(r *gin.RouterGroup) {
 	//userRoute.Use(middlewares.JWTAuthMiddleware)
 
 	adminOnlyRoute := r.Group("/admin/newsletter")
-	//adminOnlyRoute.Use(middlewares.AdminAuthMiddleware)
+	adminOnlyRoute.Use(middlewares.AdminAuthMiddleware)
 
 	registerOpenRoutes(userRoute, nlController)
 	registerAdminOnlyRoutes(adminOnlyRoute, nlController)

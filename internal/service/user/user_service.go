@@ -16,21 +16,17 @@ type UserService struct {
 	Repository *userrepository.UserRepository
 }
 
-// NewUserService returns a new instance of UserService.
+// NewUserService creates a new instance of the UserService struct.
 //
-// Parameters:
-// - repository: a pointer to the UserRepository instance.
-//
-// Returns:
-// - *UserService
+// It takes a pointer to a UserRepository as a parameter and returns a pointer to a UserService.
 func NewUserService(repository *userrepository.UserRepository) *UserService {
 	return &UserService{Repository: repository}
 }
 
-// GetAllUsers retrieves all users from the database.
+// GetAllUsers fetches all users in the database.
 //
 // No parameters.
-// Returns a slice of models.User and an error.
+// Returns a pointer to a slice of userDTO.User and an error if any.
 func (s *UserService) GetAllUsers() ([]userDTO.User, error) {
 	dbUsers, err := s.Repository.GetAll()
 	if err != nil {
@@ -44,15 +40,18 @@ func (s *UserService) GetAllUsers() ([]userDTO.User, error) {
 	return respUsers, nil
 }
 
-// GetUsersWithPagination retrieves a limited number of users from the database without pagination.
+// GetUsersWithPagination fetches a paginated list of users.
 //
-// Parameters:
-// - limit: the maximum number of users to retrieve.
-// - page: the page number for the limited results.
+// The function takes two parameters: limit and page, both integers.
+// The limit parameter specifies the number of users to be returned per page.
+// The page parameter specifies the current page number.
+// Returns a pointer to a slice of userDTO.User and an error.
+// GetUsersWithPagination fetches a paginated list of users.
 //
-// Returns:
-// - []userDTO.UserCreateResponseDTO: a slice of user response DTOs.
-// - error: an error if the operation fails.
+// The function takes two parameters: limit and page, both integers.
+// The limit parameter specifies the number of users to be returned per page.
+// The page parameter specifies the current page number.
+// Returns a pointer to a slice of userDTO.User and an error.
 func (s *UserService) GetUsersWithPagination(limit, page int) (*[]userDTO.User, error) {
 	if limit == 0 {
 		limit = 1
@@ -76,15 +75,10 @@ func (s *UserService) GetUsersWithPagination(limit, page int) (*[]userDTO.User, 
 	return &respUsers, nil
 }
 
-// GetAllUsersCount retrieves the total number of users in the database.
+// GetAllUsersCount returns the total count of all users in the database.
 //
-// It calls the CountUsers method of the UserRepository to get the count of all users.
-// If there is an error, it logs the error and returns an error with the ErrInternalServer code.
-// Otherwise, it returns the count of users and no error.
-//
-// Returns:
-// - int64: the total number of users in the database.
-// - error: an error if there was an issue retrieving the count of users.
+// No parameters.
+// Returns an int64 representing the total count of users and an error if any.
 func (s *UserService) GetAllUsersCount() (int64, error) {
 	dbUsersCount, err := s.Repository.CountUsers()
 	if err != nil {
@@ -94,10 +88,11 @@ func (s *UserService) GetAllUsersCount() (int64, error) {
 	return dbUsersCount, nil
 }
 
-// FindById retrieves a user by their ID from the database.
+// FindById finds a user by their ID.
 //
-// id is the unique identifier of the user to be retrieved.
-// Returns a models.User and an error.
+// The ID is used to search for a user in the database. If the user is found, it
+// is returned. If the user is not found, an error is returned. The error is
+// either an internal server error or a user not found error.
 func (s *UserService) FindById(id uuid.UUID) (*usermodel.User, error) {
 	dbUser, err := s.Repository.FindById(id)
 	if err != nil {
@@ -107,10 +102,11 @@ func (s *UserService) FindById(id uuid.UUID) (*usermodel.User, error) {
 	return &dbUser, nil
 }
 
-// FindByUsername retrieves a user from the database by their username.
+// FindByUsername finds a user by their username.
 //
-// username is the username of the user to be retrieved.
-// Returns a models.User and an error.
+// The username is used to search for a user in the database. If the user is
+// found, it is returned. If the user is not found, an error is returned. The
+// error is either an internal server error or a user not found error.
 func (s *UserService) FindByUsername(username string) (*userDTO.User, error) {
 	dbUser, err := s.Repository.FindByUsername(username)
 	if err != nil {
@@ -120,14 +116,11 @@ func (s *UserService) FindByUsername(username string) (*userDTO.User, error) {
 	return userDTO.FromModelToUserResponse(&dbUser), nil
 }
 
-// FindByEmail retrieves a user from the database by their email.
+// FindByEmail finds a user by their email.
 //
-// Parameters:
-// - email: the email of the user to be retrieved.
-//
-// Returns:
-// - models.User
-// - error
+// The email is used to search for a user in the database. If the user is found,
+// it is returned. If the user is not found, an error is returned. The error is
+// either an internal server error or a user not found error.
 func (s *UserService) FindByEmail(email string) (usermodel.User, error) {
 	dbUser, err := s.Repository.FindByEmail(email)
 	if err != nil {
@@ -137,14 +130,11 @@ func (s *UserService) FindByEmail(email string) (usermodel.User, error) {
 	return dbUser, nil
 }
 
-// FindByUsernameOrEmail retrieves a user from the database by their username or email.
+// FindByUsernameOrEmail finds a user by either their username or email.
 //
-// Parameters:
-// - username: the username or email of the user to be retrieved.
-//
-// Returns:
-// - models.User
-// - error
+// The username or email is used to search for a user in the database. If the
+// user is found, it is returned. If the user is not found, an error is returned.
+// The error is either an internal server error or a user not found error.
 func (s *UserService) FindByUsernameOrEmail(username string) (usermodel.User, error) {
 	dbUser, err := s.Repository.FindByUsernameOrEmail(username, username)
 	if err != nil {
@@ -154,14 +144,14 @@ func (s *UserService) FindByUsernameOrEmail(username string) (usermodel.User, er
 	return dbUser, nil
 }
 
-// Create creates a new user in the database.
+// Create creates a new user.
 //
-// Parameters:
-// - user: the user to be created.
-//
-// Returns:
-// - models.User
-// - error
+// The user is created with the provided userDto, and the password is checked
+// for complexity. If the password is not complex enough, an error is returned.
+// The user is also checked for uniqueness by their username and email. If
+// either the username or email is already in use, an error is returned.
+// Finally, the user is created in the database, and the created user is returned.
+// If the creation fails, an error is returned.
 func (s *UserService) Create(userDto *userDTO.UserCreate) (*usermodel.User, error) {
 	userModel := userDto.UserCreateResponseToModel()
 
@@ -191,15 +181,11 @@ func (s *UserService) Create(userDto *userDTO.UserCreate) (*usermodel.User, erro
 	return userModel, nil
 }
 
-// Login logs a user in and returns the user if the credentials are valid.
+// Login authenticates a user by their username or email and password.
 //
-// Parameters:
-// - usernameOrEmail: the username or email of the user to be logged in.
-// - password: the password of the user to be logged in.
-//
-// Returns:
-// - models.User
-// - error
+// usernameOrEmail is the username or email of the user to authenticate.
+// password is the password of the user to authenticate.
+// Returns the authenticated user and an error if authentication fails.
 func (s *UserService) Login(usernameOrEmail, password string) (usermodel.User, error) {
 	data := strings.ToLower(usernameOrEmail)
 	dbUser, err := s.Repository.FindByUsernameOrEmail(data, usernameOrEmail)
@@ -213,23 +199,18 @@ func (s *UserService) Login(usernameOrEmail, password string) (usermodel.User, e
 	return dbUser, nil
 }
 
-// Update updates a user in the database.
+// Update updates a user.
 //
-// Parameters:
-// - user: the user to be updated.
-//
-// Returns:
-// - error
+// user is the user to update.
+// Returns an error if the update operation fails.
 func (s *UserService) Update(user *usermodel.User) error {
 	return s.Repository.Update(user)
 }
 
-// Delete deletes a user by their ID from the database.
+// Delete deletes a user by ID.
 //
-// Parameters:
-// - id: the ID of the user to be deleted.
-// Returns:
-// - error
+// id is the unique identifier of the user to delete.
+// Returns an error if the deletion operation fails.
 func (s *UserService) Delete(id uuid.UUID) error {
 	err := s.Repository.Delete(id)
 	if err != nil {
@@ -239,24 +220,18 @@ func (s *UserService) Delete(id uuid.UUID) error {
 	return nil
 }
 
-// UpdateEmail updates the email of a user in the database.
+// UpdateEmail updates the email address associated with a user.
 //
-// Parameters:
-// - id: the ID of the user to be updated.
-// - email: the new email of the user.
-// Returns:
-// - error
+// id is the unique identifier of the user, and email is the new email address to associate with the user.
+// Returns an error if the update operation fails.
 func (s *UserService) UpdateEmail(id uuid.UUID, email string) error {
 	return s.Repository.UpdateEmail(id, email)
 }
 
-// UpdatePassword updates the password of a user in the database.
+// UpdatePassword updates the password associated with a user.
 //
-// Parameters:
-// - id: the ID of the user to be updated.
-// - password: the new password of the user.
-// Returns:
-// - error
+// id is the unique identifier of the user, and newPassword is the new password to associate with the user.
+// Returns an error if the update operation fails.
 func (s *UserService) UpdatePassword(id uuid.UUID, newPassword string) error {
 	if !utils.PasswordValid(newPassword) {
 		return errors.New(commonerrors.ErrPasswordTooWeak)
@@ -272,6 +247,10 @@ func (s *UserService) UpdatePassword(id uuid.UUID, newPassword string) error {
 	return s.Repository.UpdatePassword(id, newPassword)
 }
 
+// ResetPassword resets the password associated with a user.
+//
+// id is the unique identifier of the user, and newPassword is the new password to associate with the user.
+// Returns an error if the update operation fails.
 func (s *UserService) ResetPassword(id uuid.UUID, newPassword string) error {
 	if !utils.PasswordValid(newPassword) {
 		return errors.New(commonerrors.ErrPasswordTooWeak)
@@ -279,13 +258,10 @@ func (s *UserService) ResetPassword(id uuid.UUID, newPassword string) error {
 	return s.Repository.UpdatePassword(id, newPassword)
 }
 
-// UpdateUsername updates the username of a user in the database.
+// UpdateUsername updates the username of a user.
 //
-// Parameters:
-// - id: the ID of the user to be updated.
-// - username: the new username of the user.
-// Returns:
-// - error
+// id is the unique identifier of the user, and username is the new username to associate with the user.
+// Returns an error if the update operation fails.
 func (s *UserService) UpdateUsername(id uuid.UUID, username string) error {
 	if !utils.UsernameValid(username) {
 		return errors.New(commonerrors.ErrInvalidUsername)
@@ -293,35 +269,30 @@ func (s *UserService) UpdateUsername(id uuid.UUID, username string) error {
 	return s.Repository.UpdateUsername(id, username)
 }
 
-// UpdateRegion updates the country of a user in the database.
+// UpdateRegion updates the region of a user.
 //
-// Parameters:
-// - id: the ID of the user to be updated.
-// - country: the new country of the user.
-// Returns:
-// - error
+// id is the unique identifier of the user, and region is the name of the region to associate with the user.
+// Returns an error if the update operation fails.
 func (s *UserService) UpdateRegion(id uuid.UUID, country string) error {
 	return s.Repository.UpdateRegion(id, country)
 }
 
-// MarkEmailAsVerified updates the verified status of a user in the database.
+// MarkEmailAsVerified marks the email address associated with the user as verified.
 //
-// Parameters:
-// - id: the ID of the user to be updated.
-// - isVerified: the new verified status of the user.
-// Returns:
-// - error
+// id is the unique identifier of the user.
+// Returns an error if the update operation fails.
 func (s *UserService) MarkEmailAsVerified(id uuid.UUID) error {
 	return s.Repository.UpdateIsVerified(id, true)
 }
 
-// UpdateIsDisabled updates the disabled status of a user in the database.
+// UpdateIsDisabled updates the disabled status of a user.
 //
-// Parameters:
-// - id: the ID of the user to be updated.
-// - isDisabled: the new disabled status of the user.
-// Returns:
-// - error
+// id is the unique identifier of the user, and isDisabled is a boolean indicating whether the user should be disabled.
+// Returns an error if the update operation fails.
+// UpdateIsDisabled updates the disabled status of a user.
+//
+// id is the unique identifier of the user, and isDisabled is a boolean indicating whether the user should be disabled.
+// Returns an error if the update operation fails.
 func (s *UserService) UpdateIsDisabled(id uuid.UUID, isDisabled bool) error {
 	return s.Repository.UpdateIsDisabled(id, isDisabled)
 }

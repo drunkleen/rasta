@@ -49,8 +49,8 @@ install_tool "swag" "go install github.com/swaggo/swag/cmd/swag@latest"
 
 # Generating Docs
 echo "Generating documentation..." | tee -a "$LOGFILE"
-swag init -g ./cmd/rasta/main.go -o ./docs/swagger 2>> "$LOGFILE"
+swag init -g ./main.go -o ./docs/swagger 2>> "$LOGFILE"
 
 # Start the application
 echo "Starting the application on port $PORT..." | tee -a "$LOGFILE"
-go run cmd/rasta/main.go 2>> "$LOGFILE"
+go run ./main.go 2>> "$LOGFILE"

@@ -29,10 +29,10 @@ func InitDB() {
 	}
 }
 
-// createTables creates the necessary tables in the database.
+// createTables creates the necessary database tables for the application's models.
 //
-// It uses the AutoMigrate function from the GORM library to create tables for the User, OAuth, and OtpEmail models.
-// error - Returns an error if any of the table creations fail.
+// It uses the database connection established in the InitDB function to create tables for the User, OAuth, OtpEmail, ResetPwd, and Newsletter models.
+// Returns an error if any of the table creations fail.
 func createTables() error {
 	if err := DB.AutoMigrate(&usermodel.User{}); err != nil {
 		return err

@@ -31,6 +31,14 @@ type NewsletterEmailData struct {
 	DateNow           time.Time
 }
 
+// SendEmail sends an email to the target email address using the provided HTML template and email data.
+//
+// Parameter htmlPathFile is the path to the HTML template file, targetEmail is the recipient's email address, subject is the email subject, and EmailData is the email data to be used in the template.
+// Return type is an error object that is returned if the email sending fails.
+// SendEmail sends an email to the target email address using the provided HTML template and email data.
+//
+// Parameter htmlPathFile is the path to the HTML template file, targetEmail is the recipient's email address, subject is the email subject, and EmailData is the email data to be used in the template.
+// Return type is an error object that is returned if the email sending fails.
 func SendEmail(htmlPathFile string, targetEmail string, subject string, EmailData any) error {
 	tmpl, err := template.ParseFiles(htmlPathFile)
 	if err != nil {
@@ -68,10 +76,20 @@ func SendEmail(htmlPathFile string, targetEmail string, subject string, EmailDat
 
 	if err = d.DialAndSend(m); err != nil {
 		return err
+
 	}
 	return nil
 }
 
+// SendEmailVerify sends an email to the user with the OTP code to verify his email address.
+//
+// It uses the `welcome_and_verify.html` template to render the email content.
+//
+// Parameters:
+// - user: The user to which the email must be sent.
+//
+// Returns:
+// An error if the email was not sent successfully.
 func SendEmailVerify(user *usermodel.User) error {
 	data := &OtpEmailData{
 		Otp:               user.OtpEmail.Code,
@@ -90,6 +108,13 @@ func SendEmailVerify(user *usermodel.User) error {
 	)
 }
 
+// SendEmailResetPassword sends an email to the user with the OTP code to reset his password.
+//
+// Parameters:
+// - user: The user to which the email must be sent.
+//
+// Returns:
+// An error if the email was not sent successfully.
 func SendEmailResetPassword(user *usermodel.User) error {
 	data := &OtpEmailData{
 		Otp:               user.ResetPwd.Code,
@@ -108,6 +133,14 @@ func SendEmailResetPassword(user *usermodel.User) error {
 	)
 }
 
+// SendNewsletter sends a newsletter to a list of target email addresses.
+//
+// Parameters:
+// - targetEmails: A list of email addresses to which the newsletter must be sent.
+// - EmailBody: The body of the email.
+//
+// Returns:
+// An error if the email was not sent successfully.
 func SendNewsletter(targetEmails *[]newslettermodel.Newsletter, EmailBody *string) error {
 	subject := "Newsletter"
 	for _, email := range *targetEmails {

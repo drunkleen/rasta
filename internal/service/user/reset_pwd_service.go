@@ -17,13 +17,38 @@ type ResetPwdService struct {
 	Repository *userrepository.ResetPwdRepository
 }
 
+// NewResetPwd creates a new ResetPwdService.
+//
+// Parameters:
+//   - repository: The ResetPwdRepository to use.
+//
+// Returns:
+//   - *ResetPwdService: The created ResetPwdService.
 func NewResetPwd(repository *userrepository.ResetPwdRepository) *ResetPwdService {
 	return &ResetPwdService{Repository: repository}
 }
 
+// GenerateResetPwdAndSendEmail generates a reset password OTP and sends it to the user via email.
+//
+// It takes a user model and a user ID as parameters and returns an error.
+//
+// The OTP is generated using the GenerateOtpCode function in the auth package.
+// The OTP is valid for the amount of time specified in the env variable EMAIL_OTP_EXPIRY.
+// The generated OTP is stored in the repository.
+// The user model is then updated with the generated OTP.
+// The email is sent using the SendEmailResetPassword function in the email package.
+// If the email cannot be sent, the generated OTP is deleted from the repository and an error is returned.
 func (s *ResetPwdService) GenerateResetPwdAndSendEmail(userModel *usermodel.User, userId uuid.UUID) error {
 	otpCode := auth.GenerateOtpCode(8)
 	expTime := time.Now().Add(time.Duration(config.GetEnvEmailOTPExpiry()) * time.Second)
+	// FindByUserId retrieves a ResetPwd model by its User ID.
+	//
+	// Parameters:
+	// - id: the UUID of the User.
+	//
+	// Returns:
+	// - *usermodel.ResetPwd: the ResetPwd model if found, or nil if not found.
+	// - error: an error if the ResetPwd model cannot be retrieved.
 
 	err := s.Repository.Create(userId, otpCode, expTime)
 	if err != nil {
@@ -41,6 +66,22 @@ func (s *ResetPwdService) GenerateResetPwdAndSendEmail(userModel *usermodel.User
 	return nil
 }
 
+// FindByUserId retrieves a ResetPwd model by its User ID.
+//
+// Parameters:
+// - id: the UUID of the User.
+//
+// Returns:
+// - *usermodel.ResetPwd: the ResetPwd model if found, or nil if not found.
+// - error: an error if the ResetPwd model cannot be retrieved.
+// FindByUserId retrieves a ResetPwd model by its User ID.
+//
+// Parameters:
+// - id: the UUID of the User.
+//
+// Returns:
+// - *usermodel.ResetPwd: the ResetPwd model if found, or nil if not found.
+// - error: an error if the ResetPwd model cannot be retrieved.
 func (s *ResetPwdService) FindByUserId(id uuid.UUID) (*usermodel.ResetPwd, error) {
 	topData, err := s.Repository.FindByUserId(id)
 	if err != nil {
@@ -50,6 +91,10 @@ func (s *ResetPwdService) FindByUserId(id uuid.UUID) (*usermodel.ResetPwd, error
 	return topData, nil
 }
 
+// FindByUserEmailIncludingResetPwd retrieves a user model including reset password information by email.
+//
+// email - The email address of the user to be retrieved.
+// Returns a user model and an error.
 func (s *ResetPwdService) FindByUserEmailIncludingResetPwd(email *string) (*usermodel.User, error) {
 	user, err := s.Repository.FindByUserEmailIncludingResetPwd(email)
 	if err != nil {
@@ -59,6 +104,10 @@ func (s *ResetPwdService) FindByUserEmailIncludingResetPwd(email *string) (*user
 	return user, nil
 }
 
+// FindByUserIdIncludingResetPwd retrieves a user model including reset password information by user ID.
+//
+// id - The unique identifier of the user.
+// Returns a user model and an error.
 func (s *ResetPwdService) FindByUserIdIncludingResetPwd(id *uuid.UUID) (*usermodel.User, error) {
 	user, err := s.Repository.FindByUserIdIncludingResetPwd(id)
 	if err != nil {
@@ -68,6 +117,9 @@ func (s *ResetPwdService) FindByUserIdIncludingResetPwd(id *uuid.UUID) (*usermod
 	return user, nil
 }
 
+// Delete deletes a reset password model from the repository.
+//
+// It takes an id of type uuid.UUID as a parameter and returns an error.
 func (s *ResetPwdService) Delete(id uuid.UUID) error {
 	err := s.Repository.Delete(id)
 	if err != nil {

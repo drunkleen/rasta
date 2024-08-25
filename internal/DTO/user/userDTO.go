@@ -24,6 +24,8 @@ type UserCreate struct {
 	Region    usermodel.RegionType `json:"region" binding:"required"`
 }
 
+// UserCreateToModel converts a UserCreate DTO to a usermodel.User, ready to be
+// inserted into the database.
 func (u *UserCreate) UserCreateToModel() *usermodel.User {
 	return &usermodel.User{
 		FirstName: u.FirstName,
@@ -47,6 +49,10 @@ type UserCreateResponse struct {
 	CreatedAt  time.Time             `json:"created_at"`
 }
 
+// UserCreateResponse returns a new UserCreateResponse instance.
+//
+// It takes no parameters.
+// Returns a pointer to a UserCreateResponse struct.
 func (u *UserCreate) UserCreateResponse() *UserCreateResponse {
 	return &UserCreateResponse{
 		Id:         uuid.New(),
@@ -58,6 +64,11 @@ func (u *UserCreate) UserCreateResponse() *UserCreateResponse {
 	}
 }
 
+// UserCreateResponseToModel converts a UserCreateResponse DTO to a usermodel.User, ready to be
+// inserted into the database.
+//
+// It takes no parameters.
+// Returns a pointer to a usermodel.User struct.
 func (u *UserCreate) UserCreateResponseToModel() *usermodel.User {
 	return &usermodel.User{
 		FirstName: u.FirstName,
@@ -90,6 +101,10 @@ type User struct {
 	OAuth      oauthDTO.Response     `json:"oauth,omitempty"`
 }
 
+// FromModelToUserResponse converts a usermodel.User to a User DTO.
+//
+// It takes a pointer to a usermodel.User struct as a parameter.
+// Returns a pointer to a User struct.
 func FromModelToUserResponse(user *usermodel.User) *User {
 	return &User{
 		Id:        user.Id,
@@ -102,6 +117,10 @@ func FromModelToUserResponse(user *usermodel.User) *User {
 	}
 }
 
+// FromModelToUserResponseForAdmins converts a usermodel.User to a User DTO for admins.
+//
+// It takes a pointer to a usermodel.User struct as a parameter.
+// Returns a pointer to a User struct.
 func FromModelToUserResponseForAdmins(user *usermodel.User) *User {
 	return &User{
 		Id:         user.Id,
@@ -126,6 +145,10 @@ type LoginResponse struct {
 	Token  string `json:"token"`
 }
 
+// FromModelToUserLoginResponse converts a usermodel.User to a LoginResponse DTO.
+//
+// It takes a pointer to a usermodel.User struct and a token string as parameters.
+// Returns a pointer to a LoginResponse struct.
 func FromModelToUserLoginResponse(user *usermodel.User, token string) *LoginResponse {
 	return &LoginResponse{
 		Status: "success",
@@ -140,6 +163,10 @@ type UpdatePassword struct {
 	NewPassword2 string `json:"new_password2" binding:"required"`
 }
 
+// Validate checks if the new password and its confirmation match.
+//
+// It takes no parameters, but uses the fields of the UpdatePassword struct.
+// Returns an error if the passwords do not match, nil otherwise.
 func (u *UpdatePassword) Validate() error {
 	if u.NewPassword1 != u.NewPassword2 {
 		return errors.New("passwords do not match")
@@ -153,6 +180,10 @@ type ResetPassword struct {
 	NewPassword2 string `json:"new_password2" binding:"required"`
 }
 
+// Validate checks if the new password and its confirmation match.
+//
+// It takes no parameters, but uses the fields of the ResetPassword struct.
+// Returns an error if the passwords do not match, nil otherwise.
 func (u *ResetPassword) Validate() error {
 	if u.NewPassword1 != u.NewPassword2 {
 		return errors.New("passwords do not match")

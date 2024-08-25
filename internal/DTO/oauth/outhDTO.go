@@ -8,6 +8,10 @@ type Response struct {
 	Enabled bool   `json:"is_active"`
 }
 
+// ToOAuthResponse generates an OAuth response based on the provided parameters.
+//
+// Parameter message is the response message, token is the OAuth token, url is the OAuth URL, and isActive is a boolean indicating whether the response is active or not.
+// Return type is a pointer to the Response struct.
 func ToOAuthResponse(message, token, url string, isActive bool) *Response {
 	return &Response{
 		Status:  "success",
