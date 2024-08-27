@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/drunkleen/rasta/config"
 	newslettermodel "github.com/drunkleen/rasta/internal/models/newsletter"
+	ticketmodel "github.com/drunkleen/rasta/internal/models/ticket"
 	"github.com/drunkleen/rasta/internal/models/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -29,10 +30,8 @@ func InitDB() {
 	}
 }
 
-// createTables creates the necessary database tables for the application's models.
-//
-// It uses the database connection established in the InitDB function to create tables for the User, OAuth, OtpEmail, ResetPwd, and Newsletter models.
-// Returns an error if any of the table creations fail.
+// createTables creates the tables for the models defined in the `models`
+// package. It returns an error if any of the migrations fail.
 func createTables() error {
 	if err := DB.AutoMigrate(&usermodel.User{}); err != nil {
 		return err
@@ -47,6 +46,12 @@ func createTables() error {
 		return err
 	}
 	if err := DB.AutoMigrate(&newslettermodel.Newsletter{}); err != nil {
+		return err
+	}
+	if err := DB.AutoMigrate(&ticketmodel.Ticket{}); err != nil {
+		return err
+	}
+	if err := DB.AutoMigrate(&ticketmodel.TicketComment{}); err != nil {
 		return err
 	}
 

@@ -15,12 +15,12 @@ func RegisterUserRoutes(r *gin.RouterGroup) {
 	otpRepository := userrepository.NewOtpRepository(db)
 	userRepository := userrepository.NewUserRepository(db)
 	oauthRepository := userrepository.NewOAuthRepository(db)
-	resetPwdRepositor := userrepository.NewResetPwdRepository(db)
+	resetPwdRepository := userrepository.NewResetPwdRepository(db)
 
 	otpService := userservice.NewOtpService(otpRepository)
 	userService := userservice.NewUserService(userRepository)
 	oauthService := userservice.NewOAuthService(oauthRepository)
-	resetPwdService := userservice.NewResetPwd(resetPwdRepositor)
+	resetPwdService := userservice.NewResetPwd(resetPwdRepository)
 
 	otpController := usercontroller.NewOtpController(otpService, userService)
 	userController := usercontroller.NewUserController(userService, otpService)
