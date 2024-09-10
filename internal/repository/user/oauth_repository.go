@@ -70,7 +70,7 @@ func (r *OAuthRepository) Create(user *usermodel.User, secret string) error {
 //
 //	an error, if any
 func (r *OAuthRepository) UpdateOAuthEnabled(id uuid.UUID, oauthEnabled bool) error {
-	err := r.DB.Model(&usermodel.OAuth{}).Where("id = ?", id).Update("enabled", oauthEnabled).Error
+	err := r.DB.Model(&usermodel.OAuth{}).Where("user_id = ?", id).Update("enabled", oauthEnabled).Error
 	if err != nil {
 		log.Printf("failed to update oauth_enabled: %v", err)
 		return err

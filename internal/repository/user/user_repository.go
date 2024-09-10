@@ -134,7 +134,7 @@ func (r *UserRepository) FindByEmail(email string) (usermodel.User, error) {
 // - usermodel.User
 func (r *UserRepository) FindByUsernameOrEmail(username, email string) (usermodel.User, error) {
 	var dbUser usermodel.User
-	err := r.DB.Where("username = ?", username).Or("email = ?", email).First(&dbUser).Error
+	err := r.DB.Preload("OAuth").Where("username = ?", username).Or("email = ?", email).First(&dbUser).Error
 	if err != nil {
 		log.Printf("failed to find user: %v", err)
 		return dbUser, errors.New("failed to find user")

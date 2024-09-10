@@ -32,7 +32,7 @@ var (
 func Init() {
 	// Load the environment variables
 	DevMode = os.Getenv("RASTA_DEV_MODE") == "true"
-	if err := loadEnv(); err != nil {
+	if err := loadEnv(); DevMode && err != nil {
 		panic(err)
 	}
 	log.Println("configs successfully loaded")
